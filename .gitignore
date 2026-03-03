@@ -1,0 +1,27 @@
+# env files
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+
+# Poetry
+poetry.lock
+
+# IDE
+.vscode/
+.idea/
+
+
+
+# Alembic logs 
+*.log
