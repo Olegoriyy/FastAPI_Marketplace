@@ -13,3 +13,8 @@ class UserPablic(BaseModel):
     id: int
     username: str
     email: EmailStr
+
+
+class UserLogin(BaseModel):
+    username: str = Field(max_length=128)
+    password: str = Field(min_length=8, max_length=128)
