@@ -7,7 +7,7 @@ class UserCreate(BaseModel):
     email: EmailStr
 
 
-class UserPablic(BaseModel):
+class UserPublic(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     id: int

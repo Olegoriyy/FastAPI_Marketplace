@@ -8,9 +8,11 @@ class Settings(BaseSettings):
     DB_PASS: str
     DB_NAME: str
 
-    SECRET_KEY: str
+    ACCESS_SECRET_KEY: str
+    REFRESH_SECRET_KEY: str
     ALGORITHM: str
     ACCESS_TOKEN_EXPIRE_MINUTES: int
+    REFRESH_TOKEN_EXPIRE_MINUTES: int
 
     @property
     def DATABASE_URL_psycopg(self):

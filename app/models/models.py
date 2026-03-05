@@ -1,8 +1,8 @@
 from datetime import datetime
 from typing import Annotated
 
-from sqlalchemy import Boolean, DateTime, String, func, text
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy import Boolean, DateTime, ForeignKey, String, func, text
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models.base import Base
 
@@ -28,3 +28,25 @@ class Users(Base):
     hashed_password: Mapped[str]
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
     created_at: Mapped[CreatedAt]
+    refresh_session: Mapped[list['RefreshSession']] = relationship(
+        back_populates='user', cascade='all, delete-orphan'
+    )
+
+
+class RefreshSession(Base):
+    __tablename__ = 'refresh_sessions'
+
+    id: Mapped[PkInt]
+    user_id: Mapped[int] = mapped_column(
+        ForeignKey('users.id', ondelete='CASCADE'), index=True
+    )
+    user: Mapped['Users'] = relationship(back_populates='refresh_session')
+    hashed_token: Mapped[str] = mapped_column(String(256), unique=True, nullable=False)
+    created_at: Mapped[CreatedAt]
+    expires_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        nullable=False,
+    )
+    revoked_at: Mapped[None | datetime] = mapped_column(
+        DateTime(timezone=True),
+    )
