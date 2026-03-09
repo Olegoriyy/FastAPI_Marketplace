@@ -13,6 +13,7 @@ class UserPublic(BaseModel):
     id: int
     username: str
     email: EmailStr
+    role_id: int
 
 
 class UserLogin(BaseModel):

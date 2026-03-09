@@ -1,9 +1,13 @@
 from datetime import datetime
 from typing import Annotated
 
-from sqlalchemy import Boolean, DateTime, ForeignKey, String, func, text
+from fastapi import Depends
+from pydantic import Field
+from sqlalchemy import Boolean, DateTime, ForeignKey, String, func, select
+from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
+from app.db.deps import get_session_tx
 from app.models.base import Base
 
 PkInt = Annotated[int, mapped_column(primary_key=True)]
@@ -31,6 +35,8 @@ class Users(Base):
     refresh_session: Mapped[list['RefreshSession']] = relationship(
         back_populates='user', cascade='all, delete-orphan'
     )
+    role_id: Mapped[int] = mapped_column(ForeignKey('roles.id'), nullable=True)
+    role: Mapped['Roles'] = relationship(back_populates='user')
 
 
 class RefreshSession(Base):
@@ -50,3 +56,11 @@ class RefreshSession(Base):
     revoked_at: Mapped[None | datetime] = mapped_column(
         DateTime(timezone=True),
     )
+
+
+class Roles(Base):
+    __tablename__ = 'roles'
+
+    id: Mapped[PkInt]
+    name: Mapped[str] = mapped_column(unique=True)
+    user: Mapped['Users'] = relationship(back_populates='role')
