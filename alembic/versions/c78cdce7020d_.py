@@ -31,6 +31,7 @@ def upgrade() -> None:
     )
     op.add_column('users', sa.Column('role_id', sa.Integer(), nullable=True))
     op.create_foreign_key(None, 'users', 'roles', ['role_id'], ['id'])
+
     # ### end Alembic commands ###
 
 

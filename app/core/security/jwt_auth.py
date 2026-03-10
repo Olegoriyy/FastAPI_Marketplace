@@ -2,6 +2,7 @@ from datetime import datetime, timedelta, timezone
 from uuid import uuid4
 
 import jwt
+from fastapi import HTTPException
 from fastapi.security import OAuth2PasswordBearer
 
 from app.core.config import settings
@@ -25,7 +26,10 @@ def create_access_token(user_id: int):
 
 
 def check_and_decode_access_token(acces_token):
-    return jwt.decode(acces_token, ACCESS_SECRET_KEY, ALGORITHM)
+    try:
+        return jwt.decode(acces_token, ACCESS_SECRET_KEY, ALGORITHM)
+    except:
+        raise HTTPException(status_code=401, detail='Unauthorized')
 
 
 def create_refresh_token(user_id: int):
