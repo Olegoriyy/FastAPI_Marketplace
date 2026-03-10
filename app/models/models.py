@@ -53,13 +53,6 @@ class User(Base):
     products: Mapped[list['Product']] = relationship(back_populates='seller')
 
 
-class ProductStatus(str, Enum):
-    DRAFT = 'draft'
-    PENDING = 'pending'
-    PUBLISHED = 'published'
-    REJECTED = 'rejected'
-
-
 class Product(Base):
     __tablename__ = 'products'
 
@@ -81,9 +74,7 @@ class Product(Base):
     description: Mapped[str] = mapped_column(String(256), nullable=False)
     price: Mapped[Decimal] = mapped_column(Numeric(10, 2), nullable=False)
     quantity: Mapped[int] = mapped_column(nullable=False)
-    status: Mapped[ProductStatus] = mapped_column(
-        default=ProductStatus.DRAFT, nullable=False
-    )
+    status: Mapped[str] = mapped_column(String(50))
     created_at: Mapped[CreatedAt]
     updated_at: Mapped[UpdatedAt]
 
