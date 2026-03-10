@@ -1,15 +1,11 @@
-from datetime import datetime, timezone
 from typing import Annotated
 
 from fastapi import APIRouter, Body, Cookie, Depends, HTTPException, Response
 
 from app.core.config import settings
-from app.core.security.jwt_auth import (
-    check_and_decode_refresh_token,
-    oauth2_scheme,
-)
+from app.core.security.jwt_auth import oauth2_scheme
 from app.db.deps import AsyncSession, get_session_tx
-from app.models.models import RefreshSession, Users, get_ref_session_from_db_by_jti
+from app.schemas.auth import LoginResponse, RefreshResponse
 from app.schemas.user import UserCreate, UserLogin, UserPublic
 from app.services.auth_service import (
     check_and_get_user_by_token,
@@ -69,12 +65,12 @@ async def refresh(
 ):
     result = await refresh_and_get_tokens(refresh_token, session)
 
-    _set_refresh_cookie(response, result['ref_token'])
+    await _set_refresh_cookie(response, result['ref_token'])
 
-    return result
+    return {'access_token': result['access_token'], 'token_type': 'bearer'}
 
 
-@auth_router.get('/logout')
+@auth_router.post('/logout')
 async def logout(
     token: Annotated[str, Cookie(alias=REFRESH_COOKIE_NAME)],
     session: Annotated[AsyncSession, Depends(get_session_tx)],
@@ -83,6 +79,3 @@ async def logout(
     await revoke_current_ref_token(token, session)
     response.delete_cookie(key='REFRESH_TOKEN')
     return {'status': 'logout complete'}
-
-
-#########
