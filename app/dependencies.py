@@ -47,6 +47,11 @@ async def get_curent_user_from_token(
 ):
     payload = check_and_decode_access_token(token)
     user = await session.get(User, payload['user_id'])
+    if user is None:
+        raise HTTPException(
+            status_code=401,
+            detail='Invalid credentials',
+        )
     return user
 
 
@@ -57,5 +62,16 @@ async def requred_admin_role(
     user_role = await get_role_by_id(user.role_id, session)
     if user_role.name != 'admin':
         raise HTTPException(status_code=403, detail='Not enough permissions')
+    else:
+        return True
+
+
+async def requred_seller_role(
+    user: Annotated[User, Depends(get_curent_user_from_token)],
+    session: Annotated[AsyncSession, Depends(get_session_tx)],
+):
+    user_role = await get_role_by_id(user.role_id, session)
+    if user_role.name != 'seller':
+        raise HTTPException(status_code=403, detail='Seller role required')
     else:
         return True

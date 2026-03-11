@@ -74,7 +74,7 @@ class Product(Base):
     description: Mapped[str] = mapped_column(String(256), nullable=False)
     price: Mapped[Decimal] = mapped_column(Numeric(10, 2), nullable=False)
     quantity: Mapped[int] = mapped_column(nullable=False)
-    status: Mapped[str] = mapped_column(String(50))
+    published: Mapped[bool] = mapped_column(default=True)
     created_at: Mapped[CreatedAt]
     updated_at: Mapped[UpdatedAt]
 
