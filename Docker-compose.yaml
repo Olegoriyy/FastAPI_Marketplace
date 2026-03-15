@@ -17,5 +17,26 @@ services:
       timeout: 5s
       retries: 10
 
+  app:
+    build:
+      context: .
+      dockerfile: dockerfile
+    container_name: marketplace_app
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    command: >
+      sh -c "poetry run alembic upgrade head &&
+            poetry run uvicorn gems_marketplace.main:gems_marketplace --host 0.0.0.0 --port 8000 --reload"
 volumes:
   pg_data:
