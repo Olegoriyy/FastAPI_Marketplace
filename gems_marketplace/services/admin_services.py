@@ -26,7 +26,7 @@ class AdminService:
         role_from_db = await self.role_service.get_by_name("buyer")
         user_role_name = await self.role_service.get_by_id(user.role_id)
 
-        if user_role_name == "buyer":
+        if user_role_name.name == "buyer":
             raise HTTPException(status_code=409, detail="user already buyer")
         user.role = role_from_db
         await self.session.flush()
@@ -36,7 +36,7 @@ class AdminService:
         role_from_db = await self.role_service.get_by_name("seller")
         user_role_name = await self.role_service.get_by_id(user.role_id)
 
-        if user_role_name == "seller":
+        if user_role_name.name == "seller":
             raise HTTPException(status_code=409, detail="user already seller")
         user.role = role_from_db
         await self.session.flush()

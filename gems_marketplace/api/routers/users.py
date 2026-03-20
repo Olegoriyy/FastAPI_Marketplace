@@ -39,7 +39,7 @@ async def get_user_by_name(
 #     return UserPublic.model_validate(user)
 
 
-@users_router.get("/user/delete/{user_id}", status_code=410)
+@users_router.delete("/user/delete/{user_id}", status_code=204)
 async def delete_user(
     user_id: int, user_service: Annotated[UserService, Depends(get_user_service)]
 ) -> None:

@@ -1,8 +1,10 @@
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class CategoryCreate(BaseModel):
-    name: str
+    name: str = Field(
+        max_length=100,
+    )
 
 
 class CategoryPublic(BaseModel):

@@ -47,7 +47,7 @@ class User(Base):
     refresh_session: Mapped[list["RefreshSession"]] = relationship(
         back_populates="user", cascade="all, delete-orphan"
     )
-    role_id: Mapped[int] = mapped_column(ForeignKey("roles.id"), nullable=True)
+    role_id: Mapped[int] = mapped_column(ForeignKey("roles.id"))
     role: Mapped["Role"] = relationship(back_populates="user")
     products: Mapped[list["Product"]] = relationship(back_populates="seller")
 
@@ -69,8 +69,8 @@ class Product(Base):
         index=True,
     )
 
-    title: Mapped[str] = mapped_column(String(200), nullable=False)
-    description: Mapped[str] = mapped_column(String(256), nullable=False)
+    title: Mapped[str] = mapped_column(String(255), nullable=False)
+    description: Mapped[str] = mapped_column(String(3000), nullable=False)
     price: Mapped[Decimal] = mapped_column(Numeric(10, 2), nullable=False)
     quantity: Mapped[int] = mapped_column(nullable=False)
     published: Mapped[bool] = mapped_column(default=True)

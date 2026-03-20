@@ -47,7 +47,7 @@ class SellerService:
             description=product_in.description,
             price=product_in.price,
             quantity=product_in.quantity,
-            category_id=product_in.category_id,
+            category_id=category.id,
             seller_id=seller.id,
         )
         await self.product_repo.add_in_db(product)
@@ -69,11 +69,7 @@ class SellerService:
                 status_code=403,
                 detail="You cannot edit another seller's product",
             )
-        if self.product_repo.get_by_id(product_in.category_id) is None:
-            raise HTTPException(
-                status_code=404,
-                detail="Category not found",
-            )
+
         db_product.title = product_in.title
         db_product.description = product_in.description
         db_product.price = product_in.price
