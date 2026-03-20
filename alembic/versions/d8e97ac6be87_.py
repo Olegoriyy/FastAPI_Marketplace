@@ -13,8 +13,8 @@ import sqlalchemy as sa
 from alembic import op
 
 # revision identifiers, used by Alembic.
-revision: str = 'd8e97ac6be87'
-down_revision: Union[str, Sequence[str], None] = 'e804829c8eae'
+revision: str = "d8e97ac6be87"
+down_revision: Union[str, Sequence[str], None] = "e804829c8eae"
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 
@@ -22,16 +22,16 @@ depends_on: Union[str, Sequence[str], None] = None
 def upgrade() -> None:
     """Upgrade schema."""
     role_table = sa.table(
-        'roles',
-        sa.column('name', sa.String),
+        "roles",
+        sa.column("name", sa.String),
     )
 
     op.bulk_insert(
         role_table,
         [
-            {'name': 'buyer'},
-            {'name': 'seller'},
-            {'name': 'admin'},
+            {"name": "buyer"},
+            {"name": "seller"},
+            {"name": "admin"},
         ],
     )
 
