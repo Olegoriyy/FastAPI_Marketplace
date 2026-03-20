@@ -27,7 +27,7 @@ def create_access_token(user_id: int) -> str:
     return jwt.encode(payload, ACCESS_SECRET_KEY, ALGORITHM)
 
 
-def check_and_decode_access_token(acces_token) -> dict[str, Any]:
+def check_and_decode_access_token(acces_token: str) -> dict[str, Any]:
     try:
         return jwt.decode(acces_token, ACCESS_SECRET_KEY, ALGORITHM)
     except ExpiredSignatureError:
@@ -44,5 +44,5 @@ def create_refresh_token(user_id: int) -> str:
     return jwt.encode(payload, REFRESH_SECRET_KEY, ALGORITHM)
 
 
-def check_and_decode_refresh_token(refresh_token) -> dict[str, Any]:
+def check_and_decode_refresh_token(refresh_token: str) -> dict[str, Any]:
     return jwt.decode(refresh_token, REFRESH_SECRET_KEY, ALGORITHM)

@@ -12,8 +12,8 @@ RUN pip install --no-cache-dir --upgrade pip && \
 
 COPY pyproject.toml poetry.lock ./
 
-RUN poetry install --only main --no-root
+RUN poetry install --with dev --no-root
 
 COPY . .
 
-CMD ["poetry", "run", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["python", "-m", "uvicorn", "gems_marketplace.main:gems_marketplace", "--host", "0.0.0.0", "--port", "8000"]
