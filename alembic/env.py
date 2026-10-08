@@ -1,10 +1,9 @@
 from logging.config import fileConfig
 
-from sqlalchemy import engine_from_config, pool
-
 from alembic import context
 from gems_marketplace.config import settings
-from gems_marketplace.models import base
+from gems_marketplace.models import models
+from sqlalchemy import engine_from_config, pool
 
 config = context.config
 
@@ -13,7 +12,7 @@ if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
 
-target_metadata = base.Base.metadata
+target_metadata = models.Base.metadata
 
 config.set_main_option("sqlalchemy.url", settings.DATABASE_URL_psycopg)
 
