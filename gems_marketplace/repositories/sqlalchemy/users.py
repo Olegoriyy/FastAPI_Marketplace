@@ -9,7 +9,7 @@ class SqlalchemyUserRepository(UserRepository):
     def __init__(self, session: AsyncSession) -> None:
         self.session = session
 
-    async def get_by_name(self, username: str) -> User | None:
+    async def get_by_username(self, username: str) -> User | None:
         stmt = select(User).where(User.username == username)
         user = await self.session.scalars(stmt)
         return user.one_or_none()

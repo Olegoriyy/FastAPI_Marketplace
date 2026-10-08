@@ -40,7 +40,7 @@ class AuthService:
 
     # Регистрация
     async def user_registration(self, user: UserCreate) -> User:
-        db_user = await self.user_repo.get_by_name(user.username)
+        db_user = await self.user_repo.get_by_username(user.username)
         if db_user is not None:
             raise HTTPException(status_code=409, detail="user already registered")
 
@@ -66,7 +66,7 @@ class AuthService:
     # Логин, Выдача токенов
 
     async def login_user(self, user: UserLogin) -> dict[str, Any]:
-        db_user = await self.user_repo.get_by_name(user.username)
+        db_user = await self.user_repo.get_by_username(user.username)
         if db_user is None:
             raise HTTPException(status_code=401, detail="Invalid credentials")
 

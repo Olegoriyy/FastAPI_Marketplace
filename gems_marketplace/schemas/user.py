@@ -12,6 +12,13 @@ class UserPublic(BaseModel):
 
     id: int
     username: str
+
+
+class UserPrivate(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    username: str
     email: EmailStr
     role_id: int
 

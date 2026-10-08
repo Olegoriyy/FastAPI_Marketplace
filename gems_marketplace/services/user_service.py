@@ -16,8 +16,8 @@ class UserService:
             raise HTTPException(status_code=404, detail="User not found")
         return result
 
-    async def get_by_name(self, user_name: str) -> User:
-        user = await self.user_repo.get_by_name(user_name)
+    async def get_by_username(self, username: str) -> User:
+        user = await self.user_repo.get_by_username(username)
         if user is None:
             raise HTTPException(status_code=404, detail="User not found")
         return user
@@ -37,4 +37,7 @@ class UserService:
         user = await self.user_repo.get_by_id(user_id)
         if user is None:
             raise HTTPException(status_code=404, detail="User not found")
+        await self.user_repo.delete(user)
+
+    async def delete(self, user: User) -> None:
         await self.user_repo.delete(user)

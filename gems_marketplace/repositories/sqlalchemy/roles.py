@@ -12,8 +12,8 @@ class SqlAlchemyRoleRepository(RoleRepository):
     async def get_by_id(self, role_id: int) -> Role | None:
         return await self.session.get(Role, role_id)
 
-    async def get_by_name(self, role_name: str) -> Role | None:
-        stmt = select(Role).where(Role.name == role_name)
+    async def get_by_name(self, name: str) -> Role | None:
+        stmt = select(Role).where(Role.name == name)
         result = await self.session.scalars(stmt)
         return result.one_or_none()
 
