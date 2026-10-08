@@ -16,7 +16,7 @@ async def get_product(
 ) -> ProductPublic:
     product = await product_service.get_by_id(product_id)
 
-    if product is None or product.published is None:
+    if product is None or product.published is False:
         raise HTTPException(status_code=404, detail="Product not found")
 
     return ProductPublic.model_validate(product)
