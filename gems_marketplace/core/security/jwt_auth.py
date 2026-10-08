@@ -5,7 +5,7 @@ from uuid import uuid4
 import jwt
 from fastapi import HTTPException
 from fastapi.security import OAuth2PasswordBearer
-from jwt import ExpiredSignatureError
+from jwt import InvalidTokenError
 
 from gems_marketplace.config import settings
 
@@ -30,7 +30,7 @@ def create_access_token(user_id: int) -> str:
 def check_and_decode_access_token(acces_token: str) -> dict[str, Any]:
     try:
         return jwt.decode(acces_token, ACCESS_SECRET_KEY, ALGORITHM)
-    except ExpiredSignatureError:
+    except InvalidTokenError:
         raise HTTPException(status_code=401, detail="Unauthorized")
 
 
