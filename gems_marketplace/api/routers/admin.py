@@ -16,7 +16,7 @@ from gems_marketplace.services.user_service import UserService
 admin_router = APIRouter(tags=["admin"], dependencies=[Depends(requred_admin_role)])
 
 
-@admin_router.delete("/admin/user/{user_id}")
+@admin_router.delete("/admin/user/{user_id}", status_code=204)
 async def delete_user(
     user_service: Annotated[UserService, Depends(get_user_service)],
     user_id: int,

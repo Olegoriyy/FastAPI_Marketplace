@@ -45,4 +45,7 @@ def create_refresh_token(user_id: int) -> str:
 
 
 def check_and_decode_refresh_token(refresh_token: str) -> dict[str, Any]:
-    return jwt.decode(refresh_token, REFRESH_SECRET_KEY, ALGORITHM)
+    try:
+        return jwt.decode(refresh_token, REFRESH_SECRET_KEY, ALGORITHM)
+    except InvalidTokenError:
+        raise HTTPException(status_code=401, detail="Unauthorized")
