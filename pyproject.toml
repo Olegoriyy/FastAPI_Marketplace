@@ -16,8 +16,6 @@ dependencies = [
     "psycopg[binary] (>=3.3.3,<4.0.0)",
     "pwdlib[argon2] (>=0.3.0,<0.4.0)",
     "pyjwt (>=2.11.0,<3.0.0)",
-    "pytest-asyncio (>=1.4.0,<2.0.0)",
-    "pytest-cov (>=7.1.0,<8.0.0)"
 ]
 
 
@@ -35,6 +33,7 @@ dev = [
     "watchfiles (>=1.1.1,<2.0.0)",
     "pytest (>=9.1.1,<10.0.0)",
     "pytest-asyncio (>=1.4.0,<2.0.0)",
+    "pytest-cov (>=7.1.0,<8.0.0)"
 ]
 
 [tool.mypy]
@@ -48,3 +47,7 @@ ignore_missing_imports = true
 [tool.bandit]
 exclude_dirs = [".venv", "alembic", "tests"]
 skips = ["B101"]
+
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

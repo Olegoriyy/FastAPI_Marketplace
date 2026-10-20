@@ -1,33 +1,31 @@
 from fastapi import HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from gems_marketplace.contracts.repositories import (
-    CategoryRepository,
-    ProductRepository,
-    RoleRepository,
-    UserRepository,
-)
 from gems_marketplace.models.models import Product, User
 from gems_marketplace.schemas.product import ProductUpdate
+from gems_marketplace.services.category_service import CategoryService
+from gems_marketplace.services.product_service import ProductService
+from gems_marketplace.services.role_service import RoleService
+from gems_marketplace.services.user_service import UserService
 
 
 class SellerService:
     def __init__(
         self,
         session: AsyncSession,
-        user_repo: UserRepository,
-        role_repo: RoleRepository,
-        product_repo: ProductRepository,
-        category_repo: CategoryRepository,
+        user_service: UserService,
+        role_service: RoleService,
+        product_service: ProductService,
+        category_service: CategoryService,
     ) -> None:
         self.session = session
-        self.user_repo = user_repo
-        self.role_repo = role_repo
-        self.product_repo = product_repo
-        self.category_repo = category_repo
+        self.user_service = user_service
+        self.role_service = role_service
+        self.product_service = product_service
+        self.category_service = category_service
 
     async def get_seller_products(self, seller: User) -> list[Product]:
-        product_list = await self.product_repo.list_by_seller_id(
+        product_list = await self.product_service.list_by_seller_id(
             seller_id=seller.id, limit=10, published=True
         )
         return product_list
@@ -35,12 +33,13 @@ class SellerService:
     async def create_seller_product(
         self, seller: User, product_in: Product, category_name: str
     ) -> Product:
-        category = await self.category_repo.get_by_name(category_name)
+        category = await self.category_service.get_by_name(category_name)
         if category is None:
             raise HTTPException(
                 status_code=404,
                 detail="Category not found",
             )
+
         # вынети потом в отделную функцию
         product = Product(
             title=product_in.title,
@@ -50,7 +49,7 @@ class SellerService:
             category_id=category.id,
             seller_id=seller.id,
         )
-        await self.product_repo.add_in_db(product)
+        await self.product_service.add_in_db(product)
         await self.session.flush()
         await self.session.refresh(product)
         return product
@@ -58,7 +57,7 @@ class SellerService:
     async def update_seller_product(
         self, seller: User, product_id: int, product_in: ProductUpdate
     ) -> Product:
-        db_product = await self.product_repo.get_by_id(product_id)
+        db_product = await self.product_service.get_by_id(product_id)
         if db_product is None:
             raise HTTPException(
                 status_code=404,
@@ -84,7 +83,7 @@ class SellerService:
         seller: User,
         product_id: int,
     ) -> None:
-        product = await self.product_repo.get_by_id(product_id)
+        product = await self.product_service.get_by_id(product_id)
         if product is None:
             raise HTTPException(status_code=404, detail="Product not found")
         if product.seller_id != seller.id:
@@ -92,4 +91,4 @@ class SellerService:
                 status_code=403,
                 detail="You cannot delete another seller's product",
             )
-        await self.product_repo.delete(product)
+        await self.product_service.delete(product)

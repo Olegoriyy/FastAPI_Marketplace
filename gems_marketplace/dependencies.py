@@ -36,6 +36,7 @@ from gems_marketplace.services.auth_service import AuthService
 from gems_marketplace.services.category_service import CategoryService
 from gems_marketplace.services.product_service import ProductService
 from gems_marketplace.services.role_service import RoleService
+from gems_marketplace.services.seller_service import SellerService
 from gems_marketplace.services.user_service import UserService
 
 
@@ -127,6 +128,22 @@ async def get_admin_service(
         session=session,
         user_service=user_service,
         role_service=role_service,
+    )
+
+
+async def get_seller_service(
+    session: Annotated[AsyncSession, Depends(get_session_tx)],
+    user_service: Annotated[UserService, Depends(get_user_service)],
+    role_service: Annotated[RoleService, Depends(get_role_service)],
+    product_service: Annotated[ProductService, Depends(get_product_service)],
+    cateory_service: Annotated[CategoryService, Depends(get_category_service)],
+) -> SellerService:
+    return SellerService(
+        session=session,
+        user_service=user_service,
+        role_service=role_service,
+        product_service=product_service,
+        category_service=cateory_service,
     )
 
 
