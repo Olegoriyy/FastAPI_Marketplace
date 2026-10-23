@@ -23,3 +23,20 @@ class SqlalchemyCategoryRepository(CategoryRepository):
     async def get_list_all(self) -> list[Category]:
         result = await self.session.scalars(select(Category))
         return list(result.all())
+
+    async def update(
+        self,
+        category_id: int,
+        name: str,
+    ):
+        new_name = name
+
+        category = await self.get_by_id(category_id)
+
+        if category is None:
+            return None
+
+        category.name = new_name
+        await self.session.commit()
+        await self.session.refresh(category)
+        return category

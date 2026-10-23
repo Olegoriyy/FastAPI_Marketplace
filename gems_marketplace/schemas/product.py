@@ -25,8 +25,8 @@ class ProductPublic(BaseModel):
 
 
 class ProductUpdate(BaseModel):
-    title: str
-    description: str
-    price: Decimal = Field(max_digits=10, decimal_places=2)
-    quantity: int = Field(ge=0)
-    category_id: int = Field(gt=0)
+    title: str | None = None
+    description: str | None = None
+    price: Decimal | None = Field(max_digits=10, decimal_places=2)
+    quantity: int | None = Field(ge=0)
+    category_id: int | None = Field(gt=0)

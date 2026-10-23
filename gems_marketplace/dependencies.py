@@ -174,6 +174,19 @@ async def requred_seller_role(
         return True
 
 
+async def requred_seller_or_admin_role(
+    auth_service: Annotated[AuthService, Depends(get_auth_service)],
+    role_service: Annotated[RoleService, Depends(get_role_service)],
+    token: Annotated[str, Depends(oauth2_scheme)],
+) -> bool:
+    user = await auth_service.check_and_get_user_by_token(token)
+    user_role = await role_service.get_by_id(user.role_id)
+    if user_role.name in ("seller", "admin"):
+        return True
+    else:
+        raise HTTPException(status_code=403, detail="Not enough permissions")
+
+
 async def get_curent_user_from_token(
     session: Annotated[AsyncSession, Depends(get_session_tx)],
     token: Annotated[str, Depends(oauth2_scheme)],

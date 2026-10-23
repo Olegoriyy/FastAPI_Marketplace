@@ -55,6 +55,12 @@ class CategoryRepository(ABC):
     @abstractmethod
     async def get_list_all(self) -> list[Category]: ...
 
+    @abstractmethod
+    async def update(self, category_id: int, name: str) -> Category | None: ...
+
+    @abstractmethod
+    async def delete(self, category_id: int): ...
+
 
 class ProductRepository(ABC):
     @abstractmethod
@@ -72,6 +78,9 @@ class ProductRepository(ABC):
     async def list_by_seller_id(
         self, seller_id: int, limit: int, published: bool
     ) -> list[Product]: ...
+
+    @abstractmethod
+    async def update(self, product_id: int, data: dict) -> Product | None: ...
 
     @abstractmethod
     async def delete(self, product: Product) -> None: ...

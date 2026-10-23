@@ -43,5 +43,19 @@ class SqlalchemyProductRepository(ProductRepository):
         result = await self.session.scalars(stmt)
         return list(result.all())
 
+    async def update(self, product_id: int, data: dict):
+        product = await self.session.get(Product, product_id)
+
+        if product is None:
+            return None
+
+        for field, value in data.items():
+            setattr(product, field, value)
+
+        await self.session.commit()
+        await self.session.refresh(product)
+
+        return product
+
     async def delete(self, product: Product) -> None:
         await self.session.delete(product)
