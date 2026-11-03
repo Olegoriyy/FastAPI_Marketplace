@@ -1,3 +1,4 @@
+from fastapi import HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from gems_marketplace.contracts.repositories import CategoryRepository
@@ -14,10 +15,19 @@ class CategoryService:
         self.session = session
 
     async def get_by_name(self, name: str) -> Category | None:
-        return await self.category_repo.get_by_name(name)
+
+        category = await self.category_repo.get_by_name(name)
+        if category is None:
+            raise HTTPException(404, detail="category not found")
+        return category
 
     async def get_by_id(self, category_id: int) -> Category | None:
-        return await self.category_repo.get_by_id(category_id)
+
+        category = await self.category_repo.get_by_id(category_id)
+
+        if category is None:
+            raise HTTPException(404, detail="category not found")
+        return category
 
     async def add_in_db(self, category_name: str) -> None:
         category = Category(name=category_name)
@@ -27,4 +37,8 @@ class CategoryService:
         return await self.category_repo.get_list_all()
 
     async def delete(self, category_id: int):
-        await self.category_repo.delete(category_id)
+        category = await self.get_by_id(category_id)
+        if category is None:
+            raise HTTPException(404, detail="category not found")
+
+        await self.category_repo.delete(category.id)

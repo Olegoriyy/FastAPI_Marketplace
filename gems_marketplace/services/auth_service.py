@@ -41,6 +41,7 @@ class AuthService:
     # Регистрация
     async def user_registration(self, user: UserCreate) -> User:
         db_user = await self.user_repo.get_by_username(user.username)
+
         if db_user is not None:
             raise HTTPException(status_code=409, detail="user already registered")
 
@@ -67,7 +68,7 @@ class AuthService:
 
     async def login_user(self, user: UserLogin) -> dict[str, Any]:
         db_user = await self.user_repo.get_by_username(user.username)
-        if db_user is None:
+        if db_user is None or not db_user.is_active:
             raise HTTPException(status_code=401, detail="Invalid credentials")
 
         if not checking_password(user.password, db_user.hashed_password):
@@ -96,8 +97,9 @@ class AuthService:
     ) -> User:
         payload = check_and_decode_access_token(token)
         user = await self.user_repo.get_by_id(user_id=payload["user_id"])
-        if user is None:
+        if user is None or not user.is_active:
             raise HTTPException(status_code=401, detail="Invalid credentials")
+
         return user
 
     async def refresh_and_get_tokens(

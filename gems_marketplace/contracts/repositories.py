@@ -1,6 +1,14 @@
 from abc import ABC, abstractmethod
 
-from gems_marketplace.models.models import Category, Product, RefreshSession, Role, User
+from gems_marketplace.models.models import (
+    Category,
+    Chat,
+    Message,
+    Product,
+    RefreshSession,
+    Role,
+    User,
+)
 
 
 class UserRepository(ABC):
@@ -19,6 +27,9 @@ class UserRepository(ABC):
     @abstractmethod
     async def delete(self, user: User) -> None: ...
 
+    @abstractmethod
+    async def get_all_by_role(self, role: str) -> list[User] | None: ...
+
 
 class RoleRepository(ABC):
     @abstractmethod
@@ -36,7 +47,7 @@ class RoleRepository(ABC):
 
 class RefreshSessionRepository(ABC):
     @abstractmethod
-    async def get_by_jti(self, jti: int) -> RefreshSession | None: ...
+    async def get_by_jti(self, jti: str) -> RefreshSession | None: ...
 
     @abstractmethod
     async def add_in_db(self, ref_session: RefreshSession) -> None: ...
@@ -71,16 +82,62 @@ class ProductRepository(ABC):
 
     @abstractmethod
     async def list_by_category_id(
-        self, category_id: int, limit: int, published: bool
+        self,
+        category_id: int,
+        limit: int,
+        published: bool,
+        all: bool,
     ) -> list[Product]: ...
 
     @abstractmethod
     async def list_by_seller_id(
-        self, seller_id: int, limit: int, published: bool
+        self,
+        seller_id: int,
+        limit: int,
+        published: bool,
     ) -> list[Product]: ...
+
+    @abstractmethod
+    async def list_all_products(self) -> list[Product]: ...
 
     @abstractmethod
     async def update(self, product_id: int, data: dict) -> Product | None: ...
 
     @abstractmethod
     async def delete(self, product: Product) -> None: ...
+
+
+class ChatRepository(ABC):
+    @abstractmethod
+    async def add_in_db(self, chat: Chat) -> None: ...
+
+    @abstractmethod
+    async def get_by_id(self, chat_id: int) -> Chat | None: ...
+
+    @abstractmethod
+    async def update(self, chat_id: int, chat_data=Chat) -> Chat | None: ...
+
+    @abstractmethod
+    async def delete(self, chat: Chat) -> None: ...
+
+
+class MessageRepository(ABC):
+    @abstractmethod
+    async def add_in_db(self, message: Message) -> None: ...
+
+    @abstractmethod
+    async def get_by_id(self, message_id=int) -> Message | None: ...
+
+    @abstractmethod
+    async def update(self, message_id: int, message_data=Message) -> Message | None: ...
+
+    @abstractmethod
+    async def delete(self, message: Message) -> None: ...
+
+    @abstractmethod
+    async def get_all_by_chat_id(self, chat_id) -> list[Message]: ...
+
+    @abstractmethod
+    async def get_any_last_messages_by_chat_id(
+        self, chat_id: int, limit: int
+    ) -> list[Message]: ...

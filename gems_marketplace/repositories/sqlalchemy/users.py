@@ -2,7 +2,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from gems_marketplace.contracts.repositories import UserRepository
-from gems_marketplace.models.models import User
+from gems_marketplace.models.models import Role, User
 
 
 class SqlalchemyUserRepository(UserRepository):
@@ -13,6 +13,14 @@ class SqlalchemyUserRepository(UserRepository):
         stmt = select(User).where(User.username == username)
         user = await self.session.scalars(stmt)
         return user.one_or_none()
+
+    async def get_all_by_role(self, role: str) -> list[User] | None:
+        stmt = select(User).where(
+            User.role.has(Role.name == role),
+            User.is_active.is_(True),
+        )
+        user = await self.session.scalars(stmt)
+        return list(user.all())
 
     async def get_by_id(self, user_id: int) -> User | None:
         user = await self.session.get(User, user_id)

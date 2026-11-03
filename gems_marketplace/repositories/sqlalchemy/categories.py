@@ -40,3 +40,8 @@ class SqlalchemyCategoryRepository(CategoryRepository):
         await self.session.commit()
         await self.session.refresh(category)
         return category
+
+    async def delete(self, category_id: int):
+        category = await self.get_by_id(category_id)
+
+        return await self.session.delete(category)

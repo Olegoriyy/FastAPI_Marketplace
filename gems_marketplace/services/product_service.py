@@ -43,6 +43,7 @@ class ProductService:
             category_id=category.id,
             seller_id=user_id,
         )
+
         await self.product_repo.add_in_db(product)
         await self.session.flush()
         await self.session.refresh(product)
@@ -66,7 +67,7 @@ class ProductService:
             if value is not None:
                 data[key] = value
 
-        if data["category_id"] is not None:
+        if "category_id" in data:
             category = await self.category_service.get_by_id(data["category_id"])
             if category is None:
                 raise HTTPException(404, "No such Category")
@@ -76,10 +77,10 @@ class ProductService:
         return new_product
 
     async def list_by_category_id(
-        self, category_id: int, limit: int, published: bool
+        self, category_id: int, limit: int, published: bool, all: bool = True
     ) -> list[Product]:
         return await self.product_repo.list_by_category_id(
-            category_id, limit, published
+            category_id, limit, published, all=all
         )
 
     async def list_by_seller_id(
@@ -102,3 +103,6 @@ class ProductService:
                 )
 
         await self.product_repo.delete(product)
+
+    async def get_all_products(self):
+        return await self.product_repo.list_all_products()

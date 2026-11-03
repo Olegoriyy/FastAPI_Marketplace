@@ -16,7 +16,16 @@ services:
       interval: 5s
       timeout: 5s
       retries: 10
+  
+  qdrant:
+    image: qdrant/qdrant:v1.20.0
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:${QDRANT_PORT}:6333"
+    volumes:
+      - qdrant_data:/qdrant/storage
 
 
 volumes:
   pg_data:
+  qdrant_data:

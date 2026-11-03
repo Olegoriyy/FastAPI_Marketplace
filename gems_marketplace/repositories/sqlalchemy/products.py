@@ -1,5 +1,6 @@
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import joinedload
 
 from gems_marketplace.contracts.repositories import ProductRepository
 from gems_marketplace.models.models import Product
@@ -20,11 +21,30 @@ class SqlalchemyProductRepository(ProductRepository):
         category_id: int | None,
         limit: int = 10,
         published: bool = True,
+        all: bool = False,
     ) -> list[Product]:
+
+        if all is True:
+            stmt = select(Product).where(
+                Product.category_id == category_id, Product.published == published
+            )
+        else:
+            stmt = (
+                select(Product)
+                .where(
+                    Product.category_id == category_id, Product.published == published
+                )
+                .limit(limit)
+            )
+
+        result = await self.session.scalars(stmt)
+        return list(result.all())
+
+    async def list_all_products(self) -> list[Product]:
         stmt = (
             select(Product)
-            .where(Product.category_id == category_id, Product.published == published)
-            .limit(limit)
+            .options(joinedload(Product.category))
+            .where(Product.published.is_(True), Product.quantity > 0)
         )
         result = await self.session.scalars(stmt)
         return list(result.all())

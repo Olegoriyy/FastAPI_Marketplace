@@ -1,7 +1,7 @@
 from datetime import datetime
 from decimal import Decimal
 
-from sqlalchemy import Boolean, DateTime, ForeignKey, Numeric, String
+from sqlalchemy import Boolean, DateTime, Enum, ForeignKey, Numeric, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from gems_marketplace.models.base import Base
@@ -83,3 +83,80 @@ class Category(Base):
     id: Mapped[PkInt]
     name: Mapped[str] = mapped_column(String(100), unique=True, nullable=False)
     products: Mapped[list["Product"]] = relationship(back_populates="category")
+
+
+class Chat(Base):
+    __tablename__ = "chats"
+
+    id: Mapped[PkInt]
+
+    type: Mapped[str] = mapped_column(
+        Enum(
+            "ai",
+            "support",
+            "seller",
+            "ai,support",
+            name="chat_type",
+            validate_strings=True,
+        ),
+        nullable=False,
+    )
+
+    product_id: Mapped[int | None] = mapped_column(
+        ForeignKey("products.id"),
+        nullable=True,
+    )
+
+    first_user_id: Mapped[int] = mapped_column(
+        ForeignKey("users.id"),
+        nullable=False,
+        index=True,
+    )
+
+    second_user_id: Mapped[int | None] = mapped_column(
+        ForeignKey("users.id"),
+        nullable=True,
+        index=True,
+    )
+
+    created_at: Mapped[CreatedAt]
+    updated_at: Mapped[UpdatedAt]
+    closed_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True),
+    )
+
+
+class Message(Base):
+    __tablename__ = "messages"
+
+    id: Mapped[PkInt]
+
+    chat_id: Mapped[int] = mapped_column(
+        ForeignKey("chats.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+
+    first_user_id: Mapped[int] = mapped_column(
+        ForeignKey("users.id"),
+        nullable=False,
+    )
+
+    second_user_id: Mapped[int | None] = mapped_column(
+        ForeignKey("users.id"),
+        nullable=True,
+    )
+
+    sender: Mapped[str] = mapped_column(
+        Enum(
+            "ai",
+            "first_user",
+            "second_user",
+            name="sender",
+            validate_strings=True,
+        ),
+        nullable=True,
+    )
+
+    text: Mapped[str] = mapped_column(String(3000), nullable=False)
+
+    created_at: Mapped[CreatedAt]

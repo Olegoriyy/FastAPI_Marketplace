@@ -35,7 +35,7 @@ async def get_product_by_id(
     return ProductPublic.model_validate(result)
 
 
-@seller_router.get("/seller/product/{count}")
+@seller_router.get("/seller/product/list/{count}")
 async def get_products_list(
     user: Annotated[User, Depends(get_curent_user_from_token)],
     seller_service: Annotated[SellerService, Depends(get_seller_service)],
